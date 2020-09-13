@@ -35,13 +35,7 @@ func main() {
 
 ## Installation
 
-```
-go 1.14
-
-require (
-        github.com/solapi/solapi-go
-)
-```
+`go get github.com/solapi/solapi-go`
 
 ## Configs
 
