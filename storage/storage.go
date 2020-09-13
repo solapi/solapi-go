@@ -11,8 +11,10 @@ import (
 	"github.com/solapi/solapi-go/types"
 )
 
-var errFailToReadFile = errors.New("FailToReadFile")
-var errFileNotFound = errors.New("FileNotFound")
+var (
+	errFailToReadFile = errors.New("FailToReadFile")
+	errFileNotFound   = errors.New("FileNotFound")
+)
 
 // Storage struct
 type Storage struct{}

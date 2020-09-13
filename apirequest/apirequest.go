@@ -21,8 +21,10 @@ import (
 
 const sdkVersion string = "GO-SDK v1.0"
 
-var errFailedToConvertJSON = errors.New("FailedToConvertJSON")
-var errFailedToClientRequest = errors.New("FailedToClientRequest")
+var (
+	errFailedToConvertJSON   = errors.New("FailedToConvertJSON")
+	errFailedToClientRequest = errors.New("FailedToClientRequest")
+)
 
 // APIRequest api
 type APIRequest struct {
