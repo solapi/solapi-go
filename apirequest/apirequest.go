@@ -3,6 +3,7 @@ package apirequest
 import (
 	"bytes"
 	"crypto/hmac"
+	cr "crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -10,7 +11,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -43,13 +43,10 @@ type APIRequest struct {
 
 // RandomString returns a random string
 func RandomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
+	b := make([]byte, n)
+	_, _ = cr.Read(b)
 
-	s := make([]rune, n)
-	for i := range s {
-		s[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(s)
+	return hex.EncodeToString(b)
 }
 
 // NewAPIRequest create
