@@ -9,6 +9,10 @@
 ## Example
 
 ```go
+require (
+        github.com/solapi/solapi-go
+)
+
 func main() {
 	client := solapi.NewClient()
 
@@ -35,7 +39,9 @@ func main() {
 
 ## Installation
 
-`go get github.com/solapi/solapi-go`
+```
+go get github.com/solapi/solapi-go
+```
 
 ## Configs
 
