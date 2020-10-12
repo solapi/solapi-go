@@ -17,7 +17,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/coolsms/coolsms-go/types"
+	"github.com/solapi/solapi-go/types"
 )
 
 const sdkVersion string = "GO-SDK v1.0"
