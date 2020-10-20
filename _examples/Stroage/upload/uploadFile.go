@@ -15,7 +15,6 @@ func main() {
 		[KAKAO] : 500KB
 		[MMS] : 200KB
 		[DOCUMENT] : 2MB
-		[COOLSMS-MMS] : 300KB
 	*/
 	params := make(map[string]string)
 	params["file"] = "./test.jpg"
