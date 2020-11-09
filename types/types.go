@@ -60,12 +60,12 @@ type Point struct {
 
 // Profit struct for App struct
 type Profit struct {
-	SMS map[string]int
-	LMS map[string]int
-	MMS map[string]int
-	ATA map[string]int
-	CTA map[string]int
-	CTI map[string]int
+	SMS int
+	LMS int
+	MMS int
+	ATA int
+	CTA int
+	CTI int
 }
 
 // App struct for Group struct
@@ -94,7 +94,7 @@ type Group struct {
 	App            App
 	SdkVersion     string
 	OsPlatform     string
-	Log            []map[string]string
+	Log            []map[string]interface{}
 	Status         string
 	DateSent       string
 	DateCompleted  string
@@ -149,7 +149,7 @@ type Message struct {
 	DateReceived   string
 	StatusCode     string
 	NetworkCode    string
-	Log            []map[string]string
+	Log            []map[string]interface{}
 	Replacement    bool
 	AutoTypeDetect bool
 	RoutedQueue    string
@@ -194,8 +194,8 @@ type AddGroupMessageList struct {
 
 // LowBalanceAlert struct
 type LowBalanceAlert struct {
-	NotificationBalance int
-	CurrentBalance      int
+	NotificationBalance string
+	CurrentBalance      string
 	Balances            []int
 	Channels            []string
 	Enabled             bool
