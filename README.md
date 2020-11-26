@@ -46,7 +46,6 @@ go get github.com/solapi/solapi-go
 ## Configs
 
 ```
-
 {
   "APIKey": "NCSVYGF1IK5PUKDA",
   "APISecret": "FSD4ER2WYPZQVDBPKMLOZVAWTGYBDTRW",
@@ -55,5 +54,4 @@ go get github.com/solapi/solapi-go
   "Prefix": "",
   "AppId": "" // 이곳에 앱 아이디 입력 시 그룹 생성, 메시지 발송 시 추가로 입력할 필요 없습니다.
 }
-
 ```
