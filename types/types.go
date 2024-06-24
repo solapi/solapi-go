@@ -171,6 +171,7 @@ type Message struct {
 type MessageList struct {
 	// Data
 	StartKey    string
+	NextKey     string
 	Limit       int
 	MessageList map[string]Message
 }
