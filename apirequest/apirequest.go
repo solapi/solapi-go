@@ -65,7 +65,8 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
-// Get config file path
+// * @deprecated
+// * Get config file path
 func getConfigFilePath() string {
 	pathList := [5]string{
 		"config.json",
