@@ -9,8 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -67,7 +65,8 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
-// Get config file path
+// * @deprecated
+// * Get config file path
 func getConfigFilePath() string {
 	pathList := [5]string{
 		"config.json",
@@ -105,19 +104,19 @@ func NewAPIRequest() *APIRequest {
 	request := APIRequest{response: "", statusCode: "", OsPlatform: osPlatform, SdkVersion: sdkVersion}
 
 	// Read File
-	filePath := getConfigFilePath()
-	file, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		log.Fatalln("Error reading")
-		return &request
-	}
+	// filePath := getConfigFilePath()
+	// file, err := ioutil.ReadFile(filePath)
+	// if err != nil {
+	// 	log.Fatalln("Error reading")
+	// 	return &request
+	// }
 
-	err = json.Unmarshal(file, &request)
-	fmt.Println(request)
-	if err != nil {
-		log.Fatalln("Error file Unmarshal")
-		return &request
-	}
+	// err = json.Unmarshal(file, &request)
+	// fmt.Println(request)
+	// if err != nil {
+	// 	log.Fatalln("Error file Unmarshal")
+	// 	return &request
+	// }
 
 	return &request
 }
