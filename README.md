@@ -47,8 +47,8 @@ go get github.com/solapi/solapi-go
 
 ```
 {
-  "APIKey": "NCSVYGF1IK5PUKDA",
-  "APISecret": "FSD4ER2WYPZQVDBPKMLOZVAWTGYBDTRW",
+  "APIKey": "API Key 입력",
+  "APISecret": "API Secret Key 입력",
   "Protocol": "https",
   "Domain": "api.solapi.com",
   "Prefix": "",
