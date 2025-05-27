@@ -1,7 +1,7 @@
 # solapi-go
 
 [Site](https://www.solapi.com/) |
-[Docs](https://docs.solapi.com/) |
+[Docs](https://developers.solapi.com/) |
 [Examples](https://github.com/solapi/solapi-go/tree/master/_examples) |
 
 문자 메시지 발송 및 조회 관련 기능들을 쉽게 사용하실 수 있도록 만들어진 SDK 입니다.
@@ -44,6 +44,7 @@ go get github.com/solapi/solapi-go
 ```
 
 ## Configs
+별도의 config.json 파일을 만든 후 아래의 코드를 복사하여 APIKey, APISecret 항목을 수정하여 테스트 해보세요!
 
 ```
 {
