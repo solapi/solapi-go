@@ -1,5 +1,7 @@
 package messages
 
+import "encoding/json"
+
 // Request types
 
 // internal API-only types (not exported)
@@ -54,6 +56,7 @@ type KakaoOptions struct {
 
 type Message struct {
 	To           string            `json:"to"`
+	ToList       []string          `json:"-"`
 	From         string            `json:"from,omitempty"`
 	Text         string            `json:"text,omitempty"`
 	Subject      string            `json:"subject,omitempty"`
@@ -64,6 +67,40 @@ type Message struct {
 	Type         string            `json:"type,omitempty"`
 	AutoType     *bool             `json:"autoTypeDetect,omitempty"`
 	Title        string            `json:"title,omitempty"`
+}
+
+// MarshalJSON ensures "to" supports both string and []string
+func (m Message) MarshalJSON() ([]byte, error) {
+	toVal := any(m.To)
+	if len(m.ToList) > 0 {
+		toVal = m.ToList
+	}
+	type msgAlias struct {
+		To           any               `json:"to"`
+		From         string            `json:"from,omitempty"`
+		Text         string            `json:"text,omitempty"`
+		Subject      string            `json:"subject,omitempty"`
+		ImageID      string            `json:"imageId,omitempty"`
+		KakaoOptions *KakaoOptions     `json:"kakaoOptions,omitempty"`
+		Country      string            `json:"country,omitempty"`
+		CustomFields map[string]string `json:"customFields,omitempty"`
+		Type         string            `json:"type,omitempty"`
+		AutoType     *bool             `json:"autoTypeDetect,omitempty"`
+		Title        string            `json:"title,omitempty"`
+	}
+	return json.Marshal(msgAlias{
+		To:           toVal,
+		From:         m.From,
+		Text:         m.Text,
+		Subject:      m.Subject,
+		ImageID:      m.ImageID,
+		KakaoOptions: m.KakaoOptions,
+		Country:      m.Country,
+		CustomFields: m.CustomFields,
+		Type:         m.Type,
+		AutoType:     m.AutoType,
+		Title:        m.Title,
+	})
 }
 
 type SendRequest struct {
@@ -92,7 +129,7 @@ type GroupCount struct {
 
 type CountryCount map[string]int
 
-type ChargeBreakdown struct {
+type CoundForCharge struct {
 	SMS             CountryCount `json:"sms,omitempty"`
 	LMS             CountryCount `json:"lms,omitempty"`
 	MMS             CountryCount `json:"mms,omitempty"`
@@ -159,11 +196,11 @@ type AppInfo struct {
 }
 
 type GroupInfo struct {
-	Count          GroupCount      `json:"count"`
-	CountForCharge ChargeBreakdown `json:"countForCharge,omitempty"`
-	Balance        Amount          `json:"balance,omitempty"`
-	Point          Amount          `json:"point,omitempty"`
-	App            AppInfo         `json:"app,omitempty"`
+	Count          GroupCount     `json:"count"`
+	CountForCharge CoundForCharge `json:"countForCharge,omitempty"`
+	Balance        Amount         `json:"balance,omitempty"`
+	Point          Amount         `json:"point,omitempty"`
+	App            AppInfo        `json:"app,omitempty"`
 }
 
 type LogEntry struct {

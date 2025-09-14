@@ -1,9 +1,57 @@
-# Binaries for programs and plugins
+# macOS
+.DS_Store
+
+# Go build/test artifacts
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+*.test
+*.out
+
+# Ignore compiled binaries produced under legacy examples
+/_examples/**
+!/_examples/
+!/_examples/**/
+!/_examples/**/*.go
+!/_examples/**/*.md
+!/_examples/**/*.markdown
+!/_examples/**/*.txt
+!/_examples/**/*.json
+!/_examples/**/*.yaml
+!/_examples/**/*.yml
+!/_examples/**/*.toml
+!/_examples/**/*.sh
+!/_examples/**/*.jpg
+!/_examples/**/*.jpeg
+!/_examples/**/*.png
+!/_examples/**/*.gif
+!/_examples/**/*.pdf
+!/_examples/**/README*
+
+# Ignore compiled binaries produced under v2 examples
+/v2/examples/**
+!/v2/examples/
+!/v2/examples/**/
+!/v2/examples/**/*.go
+!/v2/examples/**/*.md
+!/v2/examples/**/*.markdown
+!/v2/examples/**/*.txt
+!/v2/examples/**/*.json
+!/v2/examples/**/*.yaml
+!/v2/examples/**/*.yml
+!/v2/examples/**/*.toml
+!/v2/examples/**/*.sh
+!/v2/examples/**/*.jpg
+!/v2/examples/**/*.jpeg
+!/v2/examples/**/*.png
+!/v2/examples/**/*.gif
+!/v2/examples/**/*.pdf
+!/v2/examples/**/README*
+
+# Common accidental binaries at v2 root when building examples inside v2
+/v2/send_*
 
 # Test binary, built with `go test -c`
 *.test

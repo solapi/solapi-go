@@ -59,6 +59,13 @@ func (s *Service) Send(ctx context.Context, input any, opts ...SendOptions) (Det
 // SendManyDetail converts SDK-facing SendRequest (with AppId) to API payload (with agent)
 // and calls messages/v4/send-many/detail
 func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGroupMessageResponse, error) {
+	// validate recipients: each message must have non-empty To or non-empty ToList
+	for _, m := range req.Messages {
+		if m.To == "" && len(m.ToList) == 0 {
+			return DetailGroupMessageResponse{}, errors.New("recipient is required")
+		}
+	}
+
 	ag := &apiAgent{
 		SDKVersion: "go/2.0.0",
 		OSPlatform: runtime.GOOS + " | " + runtime.Version(),
