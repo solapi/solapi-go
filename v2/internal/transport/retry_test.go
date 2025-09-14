@@ -31,13 +31,12 @@ func TestFetchJSON_RetryOn503ThenSuccess(t *testing.T) {
 
 	params := auth.AuthenticationParameter{ApiKey: "key", ApiSecret: "secret"}
 	req := DefaultRequest{URL: srv.URL, Method: http.MethodGet}
-	var out retryOK
-	err := FetchJSON(context.Background(), params, req, nil, &out)
+	res, err := FetchJSON[struct{}, retryOK](context.Background(), params, req, nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if out.Message != "ok" {
-		t.Fatalf("unexpected body: %+v", out)
+	if res.Message != "ok" {
+		t.Fatalf("unexpected body: %+v", res)
 	}
 	if attempts < 2 {
 		t.Fatalf("expected retry, attempts=%d", attempts)

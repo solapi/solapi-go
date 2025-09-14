@@ -31,13 +31,12 @@ func TestFetchJSON_SuccessAndAuthorizationHeader(t *testing.T) {
 	params := auth.AuthenticationParameter{ApiKey: "key", ApiSecret: "secret"}
 	req := DefaultRequest{URL: srv.URL, Method: http.MethodGet}
 
-	var out okResponse
-	err := FetchJSON(context.Background(), params, req, nil, &out)
+	res, err := FetchJSON[struct{}, okResponse](context.Background(), params, req, nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if out.Message != "ok" {
-		t.Fatalf("unexpected body: %+v", out)
+	if res.Message != "ok" {
+		t.Fatalf("unexpected body: %+v", res)
 	}
 	if !sawAuthorization {
 		t.Fatalf("Authorization header was not set")

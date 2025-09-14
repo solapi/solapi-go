@@ -11,21 +11,17 @@ import (
 	"github.com/solapi/solapi-go/v2/internal/auth"
 )
 
-type DefaultRequest struct {
-	URL    string
-	Method string
-}
-
 // FetchJSON performs an HTTP request with Authorization header, retries on 503,
-// maps 4xx to ApiError and 5xx to DefaultError, and decodes JSON into out.
-func FetchJSON(ctx context.Context, params auth.AuthenticationParameter, req DefaultRequest, body any, out any) error {
+// maps 4xx to ApiError and 5xx to DefaultError, and decodes JSON into TRes.
+func FetchJSON[TReq any, TRes any](ctx context.Context, params auth.AuthenticationParameter, req DefaultRequest, body *TReq) (TRes, error) {
+	var zero TRes
 	if req.URL == "" || req.Method == "" {
-		return errors.New("invalid request")
+		return zero, errors.New("invalid request")
 	}
 
 	authz, err := auth.BuildAuthorizationHeader(params)
 	if err != nil {
-		return err
+		return zero, err
 	}
 
 	const maxRetry = 3
@@ -34,7 +30,7 @@ func FetchJSON(ctx context.Context, params auth.AuthenticationParameter, req Def
 		if body != nil {
 			b, e := json.Marshal(body)
 			if e != nil {
-				return e
+				return zero, e
 			}
 			buf = bytes.NewReader(b)
 		} else {
@@ -43,7 +39,7 @@ func FetchJSON(ctx context.Context, params auth.AuthenticationParameter, req Def
 
 		httpReq, err := http.NewRequestWithContext(ctx, req.Method, req.URL, buf)
 		if err != nil {
-			return err
+			return zero, err
 		}
 		httpReq.Header.Set("Authorization", authz)
 		httpReq.Header.Set("Content-Type", "application/json")
@@ -53,10 +49,11 @@ func FetchJSON(ctx context.Context, params auth.AuthenticationParameter, req Def
 			if attempt < maxRetry {
 				continue
 			}
-			return err
+			return zero, err
 		}
 
 		var retErr error
+		var result TRes
 		func() {
 			defer resp.Body.Close()
 			if resp.StatusCode == http.StatusServiceUnavailable {
@@ -83,20 +80,21 @@ func FetchJSON(ctx context.Context, params auth.AuthenticationParameter, req Def
 				retErr = &DefaultError{ErrorCode: "UnknownError", ErrorMessage: string(b), Context: map[string]any{"status": resp.StatusCode, "url": req.URL}}
 				return
 			}
-			if out == nil {
-				retErr = nil
+			decErr := json.NewDecoder(resp.Body).Decode(&result)
+			if decErr != nil && !errors.Is(decErr, io.EOF) {
+				retErr = decErr
 				return
 			}
-			retErr = json.NewDecoder(resp.Body).Decode(out)
+			retErr = nil
 		}()
 
 		if retErr == nil {
-			return nil
+			return result, nil
 		}
 		if retErr.Error() == "retryable-503" {
 			continue
 		}
-		return retErr
+		return zero, retErr
 	}
-	return errors.New("unreachable")
+	return zero, errors.New("unreachable")
 }

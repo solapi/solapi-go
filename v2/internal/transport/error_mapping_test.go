@@ -26,8 +26,7 @@ func TestFetchJSON_4xxReturnsApiError(t *testing.T) {
 
 	params := auth.AuthenticationParameter{ApiKey: "key", ApiSecret: "secret"}
 	req := DefaultRequest{URL: srv.URL, Method: http.MethodGet}
-	var out map[string]any
-	err := FetchJSON(context.Background(), params, req, nil, &out)
+	_, err := FetchJSON[struct{}, struct{}](context.Background(), params, req, nil)
 	var apiErr *ApiError
 	if !errors.As(err, &apiErr) {
 		t.Fatalf("expected ApiError, got %v", err)
@@ -47,8 +46,7 @@ func TestFetchJSON_5xxReturnsDefaultError(t *testing.T) {
 
 	params := auth.AuthenticationParameter{ApiKey: "key", ApiSecret: "secret"}
 	req := DefaultRequest{URL: srv.URL, Method: http.MethodGet}
-	var out map[string]any
-	err := FetchJSON(context.Background(), params, req, nil, &out)
+	_, err := FetchJSON[struct{}, struct{}](context.Background(), params, req, nil)
 	var defErr *DefaultError
 	if !errors.As(err, &defErr) {
 		t.Fatalf("expected DefaultError, got %v", err)
