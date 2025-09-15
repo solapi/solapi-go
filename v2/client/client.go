@@ -6,6 +6,7 @@ import (
 
 	"github.com/solapi/solapi-go/v2/internal/auth"
 	"github.com/solapi/solapi-go/v2/messages"
+	"github.com/solapi/solapi-go/v2/storages"
 )
 
 const defaultBaseURL = "https://api.solapi.com"
@@ -15,6 +16,7 @@ type Client struct {
 	baseURL  string
 	creds    auth.AuthenticationParameter
 	Messages *messages.Service
+	Storages *storages.Service
 }
 
 // NewClient initializes with default base URL.
@@ -27,6 +29,7 @@ func newClientWithBaseURL(baseURL, apiKey, apiSecret string) *Client {
 	creds := auth.AuthenticationParameter{ApiKey: apiKey, ApiSecret: apiSecret}
 	c := &Client{baseURL: baseURL, creds: creds}
 	c.Messages = messages.NewService(baseURL, creds)
+	c.Storages = storages.NewService(baseURL, creds)
 	return c
 }
 
