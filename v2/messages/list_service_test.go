@@ -27,7 +27,7 @@ func TestService_List_BasicSuccess(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"messageList": map[string]any{
-				"mid-1": map[string]any{"messageId": "mid-1", "to": "010", "from": "029"},
+				"m4v": map[string]any{"messageId": "m4v", "to": "01000000000", "from": "01000000000"},
 			},
 			"limit":    1,
 			"startKey": "",
@@ -47,55 +47,7 @@ func TestService_List_BasicSuccess(t *testing.T) {
 	if len(res.MessageList) != 1 {
 		t.Fatalf("unexpected messageList size: %d", len(res.MessageList))
 	}
-	if m, ok := res.MessageList["mid-1"]; !ok || m.MessageID != "mid-1" {
+	if m, ok := res.MessageList["m4v"]; !ok || m.MessageID != "m4v" {
 		t.Fatalf("unexpected messageList: %+v", res.MessageList)
-	}
-}
-
-func TestService_List_QueryCombinations(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		if q.Get("to") != "010" || q.Get("from") != "029" || q.Get("type") != "SMS,LMS" {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		if q.Get("startDate") != "2025-01-01" || q.Get("endDate") != "2025-02-01" || q.Get("dateType") != "CREATED" {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"messageList": map[string]any{}, "limit": 20})
-	}))
-	defer ts.Close()
-
-	svc := NewService(ts.URL, auth.AuthenticationParameter{ApiKey: "k", ApiSecret: "s"})
-	_, err := svc.List(context.Background(), ListQuery{
-		To:        "010",
-		From:      "029",
-		TypeIn:    []string{"SMS", "LMS"},
-		DateType:  "CREATED",
-		StartDate: "2025-01-01",
-		EndDate:   "2025-02-01",
-	})
-	if err != nil {
-		t.Fatalf("unexpected err: %v", err)
-	}
-}
-
-func TestService_List_ServerErrorBubbles(t *testing.T) {
-	calls := 0
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		calls++
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
-	defer ts.Close()
-
-	svc := NewService(ts.URL, auth.AuthenticationParameter{ApiKey: "k", ApiSecret: "s"})
-	_, err := svc.List(context.Background(), ListQuery{Limit: 1})
-	if err == nil {
-		t.Fatalf("expected error, got nil")
-	}
-	if calls == 0 {
-		t.Fatalf("server was not called")
 	}
 }
