@@ -66,7 +66,6 @@ type Message struct {
 	CustomFields map[string]string `json:"customFields,omitempty"`
 	Type         string            `json:"type,omitempty"`
 	AutoType     *bool             `json:"autoTypeDetect,omitempty"`
-	Title        string            `json:"title,omitempty"`
 
 	// Common response-side fields (ignored on send if empty)
 	MessageID     string `json:"messageId,omitempty"`
@@ -99,7 +98,6 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		CustomFields map[string]string `json:"customFields,omitempty"`
 		Type         string            `json:"type,omitempty"`
 		AutoType     *bool             `json:"autoTypeDetect,omitempty"`
-		Title        string            `json:"title,omitempty"`
 	}
 	return json.Marshal(msgAlias{
 		To:           toVal,
@@ -112,7 +110,6 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		CustomFields: m.CustomFields,
 		Type:         m.Type,
 		AutoType:     m.AutoType,
-		Title:        m.Title,
 	})
 }
 
