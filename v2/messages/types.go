@@ -61,6 +61,15 @@ type KakaoOptions struct {
 	BMS          *KakaoBMSOptions  `json:"bms,omitempty"`
 }
 
+// VoiceOptions corresponds to voiceOptions payload for VOICE type
+type VoiceOptions struct {
+	VoiceType       string `json:"voiceType,omitempty"`
+	HeaderMessage   string `json:"headerMessage,omitempty"`
+	TailMessage     string `json:"tailMessage,omitempty"`
+	ReplyRange      int    `json:"replyRange,omitempty"`
+	CounselorNumber string `json:"counselorNumber,omitempty"`
+}
+
 type Message struct {
 	To           string            `json:"to"`
 	ToList       []string          `json:"-"`
@@ -69,6 +78,7 @@ type Message struct {
 	Subject      string            `json:"subject,omitempty"`
 	ImageID      string            `json:"imageId,omitempty"`
 	KakaoOptions *KakaoOptions     `json:"kakaoOptions,omitempty"`
+	VoiceOptions *VoiceOptions     `json:"voiceOptions,omitempty"`
 	Country      string            `json:"country,omitempty"`
 	CustomFields map[string]string `json:"customFields,omitempty"`
 	Type         string            `json:"type,omitempty"`
@@ -101,6 +111,7 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		Subject      string            `json:"subject,omitempty"`
 		ImageID      string            `json:"imageId,omitempty"`
 		KakaoOptions *KakaoOptions     `json:"kakaoOptions,omitempty"`
+		VoiceOptions *VoiceOptions     `json:"voiceOptions,omitempty"`
 		Country      string            `json:"country,omitempty"`
 		CustomFields map[string]string `json:"customFields,omitempty"`
 		Type         string            `json:"type,omitempty"`
@@ -113,6 +124,7 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		Subject:      m.Subject,
 		ImageID:      m.ImageID,
 		KakaoOptions: m.KakaoOptions,
+		VoiceOptions: m.VoiceOptions,
 		Country:      m.Country,
 		CustomFields: m.CustomFields,
 		Type:         m.Type,
