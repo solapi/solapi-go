@@ -42,6 +42,12 @@ type KakaoButton struct {
 	Keyword       string `json:"keyword,omitempty"`
 }
 
+// KakaoBMSOptions represents BMS-related options for Kakao messages.
+// targeting should be one of "I", "M", or "N".
+type KakaoBMSOptions struct {
+	Targeting string `json:"targeting,omitempty"`
+}
+
 type KakaoOptions struct {
 	PfID         string            `json:"pfId,omitempty"`
 	TemplateID   string            `json:"templateId,omitempty"`
@@ -52,6 +58,7 @@ type KakaoOptions struct {
 	Replacements map[string]any    `json:"replacements,omitempty"`
 	AdFlag       *bool             `json:"adFlag,omitempty"`
 	ImageID      string            `json:"imageId,omitempty"`
+	BMS          *KakaoBMSOptions  `json:"bms,omitempty"`
 }
 
 type Message struct {
