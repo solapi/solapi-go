@@ -70,6 +70,11 @@ type VoiceOptions struct {
 	CounselorNumber string `json:"counselorNumber,omitempty"`
 }
 
+// FaxOptions corresponds to faxOptions payload for FAX type
+type FaxOptions struct {
+	FileIDs []string `json:"fileIds"`
+}
+
 type Message struct {
 	To           string            `json:"to"`
 	ToList       []string          `json:"-"`
@@ -79,6 +84,7 @@ type Message struct {
 	ImageID      string            `json:"imageId,omitempty"`
 	KakaoOptions *KakaoOptions     `json:"kakaoOptions,omitempty"`
 	VoiceOptions *VoiceOptions     `json:"voiceOptions,omitempty"`
+	FaxOptions   *FaxOptions       `json:"faxOptions,omitempty"`
 	Country      string            `json:"country,omitempty"`
 	CustomFields map[string]string `json:"customFields,omitempty"`
 	Type         string            `json:"type,omitempty"`
@@ -112,6 +118,7 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		ImageID      string            `json:"imageId,omitempty"`
 		KakaoOptions *KakaoOptions     `json:"kakaoOptions,omitempty"`
 		VoiceOptions *VoiceOptions     `json:"voiceOptions,omitempty"`
+		FaxOptions   *FaxOptions       `json:"faxOptions,omitempty"`
 		Country      string            `json:"country,omitempty"`
 		CustomFields map[string]string `json:"customFields,omitempty"`
 		Type         string            `json:"type,omitempty"`
@@ -125,6 +132,7 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		ImageID:      m.ImageID,
 		KakaoOptions: m.KakaoOptions,
 		VoiceOptions: m.VoiceOptions,
+		FaxOptions:   m.FaxOptions,
 		Country:      m.Country,
 		CustomFields: m.CustomFields,
 		Type:         m.Type,
