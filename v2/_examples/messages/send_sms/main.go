@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/solapi/solapi-go/v2/solapi"
-	"github.com/solapi/solapi-go/v2/solapi/messages"
+	"github.com/solapi/solapi-go/v2/client"
+	"github.com/solapi/solapi-go/v2/messages"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	c := solapi.NewClient(apiKey, apiSecret)
+	c := client.NewClient(apiKey, apiSecret)
 
 	// 수신번호가 여러 개라면 To 항목을 삭제하고 ToList를 사용하세요.
 	// 예시) ToList := []string{"수신번호1", "수신번호2", "수신번호3"}

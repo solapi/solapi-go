@@ -67,6 +67,19 @@ type Message struct {
 	Type         string            `json:"type,omitempty"`
 	AutoType     *bool             `json:"autoTypeDetect,omitempty"`
 	Title        string            `json:"title,omitempty"`
+
+	// Common response-side fields (ignored on send if empty)
+	MessageID     string `json:"messageId,omitempty"`
+	GroupID       string `json:"groupId,omitempty"`
+	AccountID     string `json:"accountId,omitempty"`
+	Status        string `json:"status,omitempty"`
+	StatusCode    string `json:"statusCode,omitempty"`
+	Replacement   *bool  `json:"replacement,omitempty"`
+	DateCreated   string `json:"dateCreated,omitempty"`
+	DateUpdated   string `json:"dateUpdated,omitempty"`
+	DateProcessed string `json:"dateProcessed,omitempty"`
+	DateReported  string `json:"dateReported,omitempty"`
+	DateReceived  string `json:"dateReceived,omitempty"`
 }
 
 // MarshalJSON ensures "to" supports both string and []string
@@ -281,4 +294,30 @@ type DetailGroupMessageResponse struct {
 
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
+}
+
+// ListQuery describes filters for GET /messages/v4/list
+type ListQuery struct {
+	MessageID string
+	GroupID   string
+	To        string
+	From      string
+	TypeIn    []string
+
+	DateType  string
+	StartDate string
+	EndDate   string
+
+	StartKey string
+	Limit    int
+}
+
+// MessageListResponse matches Kotlin SDK: messageList map + pagination fields
+// kotlin: data class MessageListResponse(messageList: Map<String, Message>) : CommonListResponse
+// CommonListResponse: limit, startKey, nextKey
+type MessageListResponse struct {
+	MessageList map[string]Message `json:"messageList"`
+	Limit       int                `json:"limit"`
+	StartKey    string             `json:"startKey"`
+	NextKey     string             `json:"nextKey"`
 }

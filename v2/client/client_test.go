@@ -1,4 +1,4 @@
-package solapi
+package client
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/solapi/solapi-go/v2/solapi/messages"
+	"github.com/solapi/solapi-go/v2/messages"
 )
 
 func TestClient_MessagesSend_WiresThrough(t *testing.T) {
@@ -90,5 +90,25 @@ func TestClient_Send_ErrOnEmptyRecipientInList(t *testing.T) {
 	}
 	if calls != 0 {
 		t.Fatalf("request should not be sent when recipient invalid; calls=%d", calls)
+	}
+}
+
+func TestClient_List_Shortcut(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"messageList": map[string]any{},
+			"limit":       5,
+		})
+	}))
+	defer ts.Close()
+
+	c := newClientWithBaseURL(ts.URL, "k", "s")
+	res, err := c.List(messages.ListQuery{Limit: 5})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if res.Limit != 5 {
+		t.Fatalf("unexpected limit: %d", res.Limit)
 	}
 }

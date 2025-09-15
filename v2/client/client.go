@@ -1,11 +1,11 @@
-package solapi
+package client
 
 import (
 	"context"
 	"errors"
 
 	"github.com/solapi/solapi-go/v2/internal/auth"
-	"github.com/solapi/solapi-go/v2/solapi/messages"
+	"github.com/solapi/solapi-go/v2/messages"
 )
 
 const defaultBaseURL = "https://api.solapi.com"
@@ -58,4 +58,9 @@ func (c *Client) Send(input any, opts ...messages.SendOptions) (messages.DetailG
 		}
 	}
 	return c.Messages.Send(context.Background(), input, opts...)
+}
+
+// List is a convenience method delegating to Messages.List with Background context.
+func (c *Client) List(q messages.ListQuery) (messages.MessageListResponse, error) {
+	return c.Messages.List(context.Background(), q)
 }
