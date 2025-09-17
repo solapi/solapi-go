@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/solapi/solapi-go/v2/groups"
 	"github.com/solapi/solapi-go/v2/internal/auth"
 	"github.com/solapi/solapi-go/v2/messages"
 	"github.com/solapi/solapi-go/v2/storages"
@@ -17,6 +18,7 @@ type Client struct {
 	creds    auth.AuthenticationParameter
 	Messages *messages.Service
 	Storages *storages.Service
+	Groups   *groups.Service
 }
 
 // NewClient initializes with default base URL.
@@ -30,6 +32,7 @@ func newClientWithBaseURL(baseURL, apiKey, apiSecret string) *Client {
 	c := &Client{baseURL: baseURL, creds: creds}
 	c.Messages = messages.NewService(baseURL, creds)
 	c.Storages = storages.NewService(baseURL, creds)
+	c.Groups = groups.NewService(baseURL, creds)
 	return c
 }
 
