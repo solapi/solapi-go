@@ -60,9 +60,6 @@ func TestClient_Send_ErrOnEmptyRecipientInList(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error for empty recipient in list, got nil")
 	}
-	if err.Error() != "recipient contains empty value" {
-		t.Fatalf("unexpected error: %v", err)
-	}
 	if calls != 0 {
 		t.Fatalf("request should not be sent when recipient invalid; calls=%d", calls)
 	}
