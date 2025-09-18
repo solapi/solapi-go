@@ -1,12 +1,10 @@
 package client
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/solapi/solapi-go/v2/groups"
 	"github.com/solapi/solapi-go/v2/internal/auth"
-	"github.com/solapi/solapi-go/v2/internal/transport"
 	"github.com/solapi/solapi-go/v2/messages"
 	"github.com/solapi/solapi-go/v2/storages"
 )
@@ -51,18 +49,4 @@ func (c *Client) WithHTTPClient(hc *http.Client) *Client {
 	nc.Storages = storages.NewServiceWithHTTPClient(nc.baseURL, nc.creds, hc)
 	nc.Groups = groups.NewServiceWithHTTPClient(nc.baseURL, nc.creds, hc)
 	return &nc
-}
-
-// Send is a convenience method delegating to Messages.Send with Background context.
-func (c *Client) Send(input any, opts ...messages.SendOptions) (messages.DetailGroupMessageResponse, error) {
-	ctx := context.Background()
-	ctx = transport.WithHTTPClient(ctx, c.httpClient)
-	return c.Messages.Send(ctx, input, opts...)
-}
-
-// List is a convenience method delegating to Messages.List with Background context.
-func (c *Client) List(q messages.ListQuery) (messages.MessageListResponse, error) {
-	ctx := context.Background()
-	ctx = transport.WithHTTPClient(ctx, c.httpClient)
-	return c.Messages.List(ctx, q)
 }

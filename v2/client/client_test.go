@@ -74,7 +74,7 @@ func TestClient_WithHTTPClient_PropagatesToTransport(t *testing.T) {
 	hc := &http.Client{Transport: rt}
 
 	c := newClientWithBaseURL(ts.URL, "k", "s").WithHTTPClient(hc)
-	_, err := c.Send(messages.Message{To: "010"})
+	_, err := c.Messages.Send(context.Background(), messages.Message{To: "010"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -92,7 +92,7 @@ func TestClient_Send_ErrOnEmptyRecipientInList(t *testing.T) {
 	defer ts.Close()
 
 	c := newClientWithBaseURL(ts.URL, "k", "s")
-	_, err := c.Send(messages.Message{ToList: []string{"010", ""}})
+	_, err := c.Messages.Send(context.Background(), messages.Message{ToList: []string{"010", ""}})
 	if err == nil {
 		t.Fatalf("expected error for empty recipient in list, got nil")
 	}

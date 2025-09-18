@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -49,11 +50,11 @@ func main() {
 	// }
 	// allowDuplicates := true
 
-	// res, err := c.Send(msgs, messages.SendOptions{
+	// res, err := c.Messages.Send(context.Background(), msgs, messages.SendOptions{
 	// 	AllowDuplicates: &allowDuplicates,
 	// })
 
-	res, err := c.Send(msg)
+	res, err := c.Messages.Send(context.Background(), msg)
 	if err != nil {
 		fmt.Println("send error:", err)
 		os.Exit(1)

@@ -67,7 +67,7 @@ func main() {
 		ImageID: upRes.FileID,
 	}
 
-	res, err := c.Send(msg)
+	res, err := c.Messages.Send(context.Background(), msg)
 	if err != nil {
 		fmt.Println("send error:", err)
 		os.Exit(1)

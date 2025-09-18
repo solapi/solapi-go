@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -25,7 +26,7 @@ func TestClient_Send_Shortcut(t *testing.T) {
 	defer ts.Close()
 
 	c := newClientWithBaseURL(ts.URL, "k", "s")
-	res, err := c.Send(messages.Message{To: "010"})
+	res, err := c.Messages.Send(context.Background(), messages.Message{To: "010"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -45,7 +46,7 @@ func TestClient_List_Shortcut(t *testing.T) {
 	defer ts.Close()
 
 	c := newClientWithBaseURL(ts.URL, "k", "s")
-	res, err := c.List(messages.ListQuery{Limit: 5})
+	res, err := c.Messages.List(context.Background(), messages.ListQuery{Limit: 5})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
