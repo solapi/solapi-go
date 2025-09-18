@@ -46,6 +46,10 @@ func (c *Client) WithHTTPClient(hc *http.Client) *Client {
 	}
 	nc := *c
 	nc.httpClient = hc
+	// Reinitialize services to ensure direct calls use the custom http.Client
+	nc.Messages = messages.NewServiceWithHTTPClient(nc.baseURL, nc.creds, hc)
+	nc.Storages = storages.NewServiceWithHTTPClient(nc.baseURL, nc.creds, hc)
+	nc.Groups = groups.NewServiceWithHTTPClient(nc.baseURL, nc.creds, hc)
 	return &nc
 }
 
