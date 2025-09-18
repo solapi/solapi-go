@@ -12,9 +12,6 @@ import (
 	"github.com/solapi/solapi-go/v2/internal/transport"
 )
 
-// Service handles message related APIs.
-// It is intentionally small to satisfy v2 line constraints.
-
 type Service struct {
 	baseURL    string
 	creds      auth.AuthenticationParameter
@@ -59,8 +56,6 @@ func (s *Service) Send(ctx context.Context, input any, opts ...SendOptions) (Det
 	}
 }
 
-// SendManyDetail converts SDK-facing SendRequest (with AppId) to API payload (with agent)
-// and calls messages/v4/send-many/detail
 func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGroupMessageResponse, error) {
 	// validate recipients: each message must have non-empty To or non-empty ToList
 	for _, m := range req.Messages {
@@ -92,6 +87,7 @@ func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGr
 	}
 	url := fmt.Sprintf("%s/messages/v4/send-many/detail", s.baseURL)
 	httpReq := transport.DefaultRequest{URL: url, Method: "POST"}
+	ctx = transport.WithHTTPClient(ctx, s.httpClient)
 	res, err := transport.FetchJSON[apiSendRequest, DetailGroupMessageResponse](ctx, s.creds, httpReq, &payload)
 	if err != nil {
 		return DetailGroupMessageResponse{}, err
