@@ -64,6 +64,11 @@ func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGr
 		if m.To == "" && len(m.ToList) == 0 {
 			return DetailGroupMessageResponse{}, errors.New("recipient is required")
 		}
+		for _, to := range m.ToList {
+			if to == "" {
+				return DetailGroupMessageResponse{}, errors.New("recipient in ToList cannot be empty")
+			}
+		}
 	}
 
 	ag := &apiAgent{
