@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"regexp"
 	"strings"
 	"testing"
@@ -62,4 +63,17 @@ func TestBuildAuthorizationHeader_SaltFormat(t *testing.T) {
 	if ok, _ := regexp.MatchString("^[0-9A-Za-z]{32}$", salt); !ok {
 		t.Fatalf("salt contains invalid charset: %s", salt)
 	}
+}
+
+func TestGenerateSalt_PanicsWhenRandFails(t *testing.T) {
+	old := randRead
+	defer func() { randRead = old }()
+	// make randRead return error
+	randRead = func(b []byte) (int, error) { return 0, errors.New("boom") }
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("expected panic when randRead fails")
+		}
+	}()
+	_ = GenerateSalt(16)
 }
