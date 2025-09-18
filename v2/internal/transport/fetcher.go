@@ -85,7 +85,11 @@ func FetchJSONWithClient[TReq any, TRes any](ctx context.Context, httpClient *ht
 				return
 			}
 			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				b, _ := io.ReadAll(resp.Body)
+				b, readErr := io.ReadAll(resp.Body)
+				if readErr != nil {
+					retErr = &DefaultError{ErrorCode: "UnknownError", ErrorMessage: readErr.Error(), Context: map[string]any{"status": resp.StatusCode, "url": req.URL}}
+					return
+				}
 				retErr = &DefaultError{ErrorCode: "UnknownError", ErrorMessage: string(b), Context: map[string]any{"status": resp.StatusCode, "url": req.URL}}
 				return
 			}
