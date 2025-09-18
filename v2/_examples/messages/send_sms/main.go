@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -59,5 +60,10 @@ func main() {
 		fmt.Println("send error:", err)
 		os.Exit(1)
 	}
-	fmt.Printf("groupId=%s total=%d registeredFailed=%d\n", res.GroupID, res.GroupInfo.Count.Total, res.GroupInfo.Count.RegisteredFailed)
+	b, err := json.MarshalIndent(res, "", "  ")
+	if err != nil {
+		fmt.Println("marshal error:", err)
+		os.Exit(1)
+	}
+	fmt.Println(string(b))
 }

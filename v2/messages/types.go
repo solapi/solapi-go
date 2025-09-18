@@ -225,6 +225,14 @@ type FailedMessage struct {
 	AccountID     string `json:"accountId"`
 }
 
+// MessageListItem represents per-message result summary for send-many/detail
+type MessageListItem struct {
+	MessageID     string            `json:"messageId"`
+	StatusCode    string            `json:"statusCode"`
+	CustomFields  map[string]string `json:"customFields,omitempty"`
+	StatusMessage string            `json:"statusMessage"`
+}
+
 type UnitPrice struct {
 	SMS             float64 `json:"sms,omitempty"`
 	LMS             float64 `json:"lms,omitempty"`
@@ -254,8 +262,9 @@ type UnitPrice struct {
 type Price map[string]UnitPrice
 
 type DetailGroupMessageResponse struct {
-	GroupInfo         GroupInfo       `json:"groupInfo"`
-	FailedMessageList []FailedMessage `json:"failedMessageList"`
+	GroupInfo         GroupInfo         `json:"groupInfo"`
+	FailedMessageList []FailedMessage   `json:"failedMessageList"`
+	MessageList       []MessageListItem `json:"messageList,omitempty"`
 
 	Status          string         `json:"status"`
 	DateSent        string         `json:"dateSent"`

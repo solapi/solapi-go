@@ -55,7 +55,7 @@ func main() {
 실제 SOLAPI Golang SDK를 적용 할 프로젝트 폴더에서 터미널을 실행 한 다음, 아래와 같은 명령어를 입력 해 주세요!
 
 ```
-go get github.com/solapi/solapi-go
+go get github.com/solapi/solapi-go/v2
 ```
 
 ## 주의사항
