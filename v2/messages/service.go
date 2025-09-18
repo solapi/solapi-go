@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"runtime"
 
+	"net/http"
+
 	"github.com/solapi/solapi-go/v2/internal/auth"
 	"github.com/solapi/solapi-go/v2/internal/transport"
 )
@@ -14,12 +16,13 @@ import (
 // It is intentionally small to satisfy v2 line constraints.
 
 type Service struct {
-	baseURL string
-	creds   auth.AuthenticationParameter
+	baseURL    string
+	creds      auth.AuthenticationParameter
+	httpClient *http.Client
 }
 
 func NewService(baseURL string, creds auth.AuthenticationParameter) *Service {
-	return &Service{baseURL: baseURL, creds: creds}
+	return &Service{baseURL: baseURL, creds: creds, httpClient: http.DefaultClient}
 }
 
 // Send accepts Message, []Message, or SendRequest and normalizes to the API call.

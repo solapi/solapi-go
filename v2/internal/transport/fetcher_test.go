@@ -42,3 +42,39 @@ func TestFetchJSON_SuccessAndAuthorizationHeader(t *testing.T) {
 		t.Fatalf("Authorization header was not set")
 	}
 }
+
+// Verify we can use a provided http.Client (with custom Transport) instead of http.DefaultClient
+func TestFetchJSON_WithCustomClient(t *testing.T) {
+	t.Parallel()
+
+	// Test server to echo a header that our custom RoundTripper will set
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(okResponse{Message: r.Header.Get("X-Custom-From-Client")})
+	}))
+	t.Cleanup(srv.Close)
+
+	// custom transport injects header
+	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
+		req.Header.Set("X-Custom-From-Client", "yes")
+		return http.DefaultTransport.RoundTrip(req)
+	})
+
+	httpClient := &http.Client{Transport: rt}
+
+	params := auth.AuthenticationParameter{ApiKey: "key", ApiSecret: "secret"}
+	req := DefaultRequest{URL: srv.URL, Method: http.MethodGet}
+
+	res, err := FetchJSONWithClient[struct{}, okResponse](context.Background(), httpClient, params, req, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if res.Message != "yes" {
+		t.Fatalf("custom client not used, message=%q", res.Message)
+	}
+}
+
+// minimal roundTripperFunc helper
+type roundTripperFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripperFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }

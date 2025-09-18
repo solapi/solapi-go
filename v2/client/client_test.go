@@ -47,6 +47,42 @@ func TestClient_MessagesSend_WiresThrough(t *testing.T) {
 	}
 }
 
+func TestClient_WithHTTPClient_PropagatesToTransport(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-From-Custom") != "1" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"groupInfo": map[string]any{
+				"count": map[string]any{
+					"total":            1,
+					"registeredFailed": 0,
+				},
+			},
+			"failedMessageList": []any{},
+		})
+	}))
+	defer ts.Close()
+
+	// custom client that injects header via RoundTripper
+	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
+		req.Header.Set("X-From-Custom", "1")
+		return http.DefaultTransport.RoundTrip(req)
+	})
+	hc := &http.Client{Transport: rt}
+
+	c := newClientWithBaseURL(ts.URL, "k", "s").WithHTTPClient(hc)
+	_, err := c.Send(messages.Message{To: "010"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+type roundTripperFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripperFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
 func TestClient_Send_ErrOnEmptyRecipientInList(t *testing.T) {
 	calls := 0
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -11,9 +11,17 @@ import (
 	"github.com/solapi/solapi-go/v2/internal/auth"
 )
 
+var errRetryable = errors.New("retryable")
+
 // FetchJSON performs an HTTP request with Authorization header, retries on 503,
 // maps 4xx to ApiError and 5xx to DefaultError, and decodes JSON into TRes.
 func FetchJSON[TReq any, TRes any](ctx context.Context, params auth.AuthenticationParameter, req DefaultRequest, body *TReq) (TRes, error) {
+	return FetchJSONWithClient[TReq, TRes](ctx, httpClientFromContext(ctx), params, req, body)
+}
+
+// FetchJSONWithClient is like FetchJSON but uses the provided *http.Client.
+// Library users can configure timeouts, transports, and middlewares via this client.
+func FetchJSONWithClient[TReq any, TRes any](ctx context.Context, httpClient *http.Client, params auth.AuthenticationParameter, req DefaultRequest, body *TReq) (TRes, error) {
 	var zero TRes
 	if req.URL == "" || req.Method == "" {
 		return zero, errors.New("invalid request")
@@ -44,7 +52,8 @@ func FetchJSON[TReq any, TRes any](ctx context.Context, params auth.Authenticati
 		httpReq.Header.Set("Authorization", authz)
 		httpReq.Header.Set("Content-Type", "application/json")
 
-		resp, err := http.DefaultClient.Do(httpReq)
+		// Use provided client; caller is responsible for sensible defaults (e.g., timeouts)
+		resp, err := httpClient.Do(httpReq)
 		if err != nil {
 			if attempt < maxRetry {
 				continue
@@ -59,7 +68,7 @@ func FetchJSON[TReq any, TRes any](ctx context.Context, params auth.Authenticati
 			if resp.StatusCode == http.StatusServiceUnavailable {
 				if attempt < maxRetry {
 					_, _ = io.Copy(io.Discard, resp.Body)
-					retErr = errors.New("retryable-503")
+					retErr = errRetryable
 					return
 				}
 			}
@@ -91,7 +100,7 @@ func FetchJSON[TReq any, TRes any](ctx context.Context, params auth.Authenticati
 		if retErr == nil {
 			return result, nil
 		}
-		if retErr.Error() == "retryable-503" {
+		if errors.Is(retErr, errRetryable) {
 			continue
 		}
 		return zero, retErr
