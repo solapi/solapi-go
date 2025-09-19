@@ -2,7 +2,7 @@
 
 [Site](https://www.solapi.com/) |
 [Docs](https://developers.solapi.com/) |
-[Examples](https://github.com/solapi/solapi-go/tree/master/v2/_examples) |
+[Examples](https://github.com/solapi/solapi-go/tree/master/v2/_examples)
 
 SOLAPI 서비스를 이용하실 때, Golang에서 문자 메시지 발송 및 조회 관련 기능들을 쉽게 사용하실 수 있도록 만들어진 Golang 전용의 SOLAPI SDK 입니다.
 
@@ -58,7 +58,7 @@ func main() {
 go get github.com/solapi/solapi-go/v2
 ```
 
-## 주의사항
+## ⚠️ 주의사항
 
 해당 레포지터리 내 루트 디렉터리 상 바로 확인할 수 있는 [_examples](https://github.com/solapi/solapi-go/tree/master/_examples) 폴더는 구 버전의 예제 코드를 안내하고 있습니다.  
 실제 최신 예제는 [v2/_examples](https://github.com/solapi/solapi-go/tree/master/v2/_examples) 폴더를 확인 해 주세요!
