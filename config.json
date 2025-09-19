@@ -1,6 +1,6 @@
 {
-  "APIKey": "",
-  "APISecret": "",
+  "APIKey": "INSERT_API_KEY",
+  "APISecret": "INSERT_API_SECRET",
   "Protocol": "https",
   "Domain": "api.solapi.com",
   "Prefix": "",
