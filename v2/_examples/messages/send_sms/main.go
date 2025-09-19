@@ -13,6 +13,8 @@ import (
 func main() {
 	apiKey := os.Getenv("API_KEY")
 	apiSecret := os.Getenv("API_SECRET")
+
+	// 발신번호 및 수신번호 입력 형식은 01000000000 형식으로 입력하세요.
 	to := "수신번호 입력"
 	from := "계정에 등록한 발신번호 입력"
 	if apiKey == "" || apiSecret == "" {

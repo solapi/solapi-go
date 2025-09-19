@@ -1,5 +1,7 @@
 package messages
 
+import "encoding/json"
+
 // Request types
 
 // internal API-only types (not exported)
@@ -202,6 +204,32 @@ type GroupInfo struct {
 	Balance        Amount         `json:"balance,omitempty"`
 	Point          Amount         `json:"point,omitempty"`
 	App            AppInfo        `json:"app,omitempty"`
+
+	// Additional fields found in actual API response
+	ID              string            `json:"_id"`
+	ServiceMethod   string            `json:"serviceMethod"`
+	APIVersion      string            `json:"apiVersion"`
+	SDKVersion      string            `json:"sdkVersion"`
+	OSPlatform      string            `json:"osPlatform"`
+	Log             []LogEntry        `json:"log,omitempty"`
+	Status          string            `json:"status"`
+	DateSent        string            `json:"dateSent"`
+	ScheduledDate   string            `json:"scheduledDate"`
+	DateCompleted   string            `json:"dateCompleted"`
+	IsRefunded      bool              `json:"isRefunded"`
+	FlagUpdated     bool              `json:"flagUpdated"`
+	CustomFields    map[string]string `json:"customFields"`
+	Prepaid         bool              `json:"prepaid"`
+	Strict          bool              `json:"strict"`
+	Hint            json.RawMessage   `json:"hint"`
+	MasterAccountID string            `json:"masterAccountId"`
+	AllowDuplicates bool              `json:"allowDuplicates"`
+	ClusterKey      *string           `json:"clusterKey"`
+	AccountID       string            `json:"accountId"`
+	GroupID         string            `json:"groupId"`
+	Price           Price             `json:"price"` // Price field inside groupInfo
+	DateCreated     string            `json:"dateCreated"`
+	DateUpdated     string            `json:"dateUpdated"`
 }
 
 type LogEntry struct {
@@ -266,23 +294,23 @@ type DetailGroupMessageResponse struct {
 	FailedMessageList []FailedMessage   `json:"failedMessageList"`
 	MessageList       []MessageListItem `json:"messageList,omitempty"`
 
-	Status          string         `json:"status"`
-	DateSent        string         `json:"dateSent"`
-	ScheduledDate   string         `json:"scheduledDate"`
-	DateCompleted   string         `json:"dateCompleted"`
-	IsRefunded      bool           `json:"isRefunded"`
-	FlagUpdated     bool           `json:"flagUpdated"`
-	Prepaid         bool           `json:"prepaid"`
-	Strict          bool           `json:"strict"`
-	MasterAccountID string         `json:"masterAccountId"`
-	AllowDuplicates bool           `json:"allowDuplicates"`
-	ID              string         `json:"_id"`
-	AccountID       string         `json:"accountId"`
-	APIVersion      string         `json:"apiVersion"`
-	CustomFields    map[string]any `json:"customFields"`
-	Hint            string         `json:"hint"`
-	GroupID         string         `json:"groupId"`
-	Price           Price          `json:"price"`
+	Status          string            `json:"status"`
+	DateSent        string            `json:"dateSent"`
+	ScheduledDate   string            `json:"scheduledDate"`
+	DateCompleted   string            `json:"dateCompleted"`
+	IsRefunded      bool              `json:"isRefunded"`
+	FlagUpdated     bool              `json:"flagUpdated"`
+	Prepaid         bool              `json:"prepaid"`
+	Strict          bool              `json:"strict"`
+	MasterAccountID string            `json:"masterAccountId"`
+	AllowDuplicates bool              `json:"allowDuplicates"`
+	ID              string            `json:"_id,omitempty"` // Support both _id and id
+	AccountID       string            `json:"accountId"`
+	APIVersion      string            `json:"apiVersion"`
+	CustomFields    map[string]string `json:"customFields"`
+	Hint            string            `json:"hint"`
+	GroupID         string            `json:"groupId"`
+	Price           Price             `json:"price"`
 
 	ServiceMethod string     `json:"serviceMethod,omitempty"`
 	SDKVersion    string     `json:"sdkVersion,omitempty"`
@@ -291,6 +319,167 @@ type DetailGroupMessageResponse struct {
 
 	DateCreated string `json:"dateCreated"`
 	DateUpdated string `json:"dateUpdated"`
+}
+
+// UnmarshalJSON implements custom JSON unmarshaling for DetailGroupMessageResponse
+// to handle different API response formats
+func (d *DetailGroupMessageResponse) UnmarshalJSON(data []byte) error {
+	type detailGroupMessageResponseAlias struct {
+		GroupInfo         GroupInfo         `json:"groupInfo"`
+		FailedMessageList []FailedMessage   `json:"failedMessageList"`
+		MessageList       []MessageListItem `json:"messageList,omitempty"`
+
+		Status          string            `json:"status"`
+		DateSent        string            `json:"dateSent"`
+		ScheduledDate   *string           `json:"scheduledDate"` // Can be null
+		DateCompleted   *string           `json:"dateCompleted"` // Can be null
+		IsRefunded      bool              `json:"isRefunded"`
+		FlagUpdated     bool              `json:"flagUpdated"`
+		Prepaid         bool              `json:"prepaid"`
+		Strict          bool              `json:"strict"`
+		MasterAccountID *string           `json:"masterAccountId"` // Can be null
+		AllowDuplicates bool              `json:"allowDuplicates"`
+		ID              string            `json:"_id,omitempty"`
+		IDAlt           string            `json:"id,omitempty"` // Alternative ID field
+		AccountID       string            `json:"accountId"`
+		APIVersion      string            `json:"apiVersion"`
+		CustomFields    map[string]string `json:"customFields"`
+		Hint            json.RawMessage   `json:"hint"` // Can be object or other format
+		GroupID         string            `json:"groupId"`
+		// Price is inside groupInfo, not at top level
+
+		ServiceMethod string     `json:"serviceMethod,omitempty"`
+		SDKVersion    string     `json:"sdkVersion,omitempty"`
+		OSPlatform    string     `json:"osPlatform,omitempty"`
+		Log           []LogEntry `json:"log,omitempty"`
+
+		DateCreated string `json:"dateCreated"`
+		DateUpdated string `json:"dateUpdated"`
+	}
+
+	var v detailGroupMessageResponseAlias
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+
+	// Copy all fields - prefer top-level fields, fallback to groupInfo fields
+	d.GroupInfo = v.GroupInfo
+	d.FailedMessageList = v.FailedMessageList
+	d.MessageList = v.MessageList
+
+	// Use top-level fields if available, otherwise use groupInfo fields
+	if v.Status != "" {
+		d.Status = v.Status
+	} else if v.GroupInfo.Status != "" {
+		d.Status = v.GroupInfo.Status
+	}
+
+	if v.DateSent != "" {
+		d.DateSent = v.DateSent
+	} else if v.GroupInfo.DateSent != "" {
+		d.DateSent = v.GroupInfo.DateSent
+	}
+
+	// Handle nullable fields
+	if v.ScheduledDate != nil && *v.ScheduledDate != "" {
+		d.ScheduledDate = *v.ScheduledDate
+	} else if v.GroupInfo.ScheduledDate != "" {
+		d.ScheduledDate = v.GroupInfo.ScheduledDate
+	} else {
+		d.ScheduledDate = ""
+	}
+
+	if v.DateCompleted != nil && *v.DateCompleted != "" {
+		d.DateCompleted = *v.DateCompleted
+	} else if v.GroupInfo.DateCompleted != "" {
+		d.DateCompleted = v.GroupInfo.DateCompleted
+	} else {
+		d.DateCompleted = ""
+	}
+
+	if v.MasterAccountID != nil && *v.MasterAccountID != "" {
+		d.MasterAccountID = *v.MasterAccountID
+	} else if v.GroupInfo.MasterAccountID != "" {
+		d.MasterAccountID = v.GroupInfo.MasterAccountID
+	} else {
+		d.MasterAccountID = ""
+	}
+
+	d.IsRefunded = v.IsRefunded || v.GroupInfo.IsRefunded
+	d.FlagUpdated = v.FlagUpdated || v.GroupInfo.FlagUpdated
+	d.Prepaid = v.Prepaid || v.GroupInfo.Prepaid
+	d.Strict = v.Strict || v.GroupInfo.Strict
+	d.AllowDuplicates = v.AllowDuplicates || v.GroupInfo.AllowDuplicates
+
+	if v.AccountID != "" {
+		d.AccountID = v.AccountID
+	} else if v.GroupInfo.AccountID != "" {
+		d.AccountID = v.GroupInfo.AccountID
+	}
+
+	if v.APIVersion != "" {
+		d.APIVersion = v.APIVersion
+	} else if v.GroupInfo.APIVersion != "" {
+		d.APIVersion = v.GroupInfo.APIVersion
+	}
+
+	d.CustomFields = v.CustomFields
+	if d.CustomFields == nil && v.GroupInfo.CustomFields != nil {
+		d.CustomFields = v.GroupInfo.CustomFields
+	}
+
+	// Handle hint field - try to unmarshal as map, fallback to empty string
+	if len(v.Hint) > 0 {
+		var hintMap map[string]any
+		if err := json.Unmarshal(v.Hint, &hintMap); err == nil {
+			// Successfully unmarshaled as map, but we need to convert back to string for now
+			// TODO: Update DetailGroupMessageResponse.Hint type to support map
+			d.Hint = ""
+		} else {
+			// If unmarshaling fails, just set empty string
+			d.Hint = ""
+		}
+	} else {
+		d.Hint = ""
+	}
+
+	if v.GroupID != "" {
+		d.GroupID = v.GroupID
+	} else if v.GroupInfo.GroupID != "" {
+		d.GroupID = v.GroupInfo.GroupID
+	}
+
+	d.ServiceMethod = v.ServiceMethod
+	d.SDKVersion = v.SDKVersion
+	d.OSPlatform = v.OSPlatform
+	d.Log = v.Log
+	if d.Log == nil && v.GroupInfo.Log != nil {
+		d.Log = v.GroupInfo.Log
+	}
+
+	if v.DateCreated != "" {
+		d.DateCreated = v.DateCreated
+	} else if v.GroupInfo.DateCreated != "" {
+		d.DateCreated = v.GroupInfo.DateCreated
+	}
+
+	if v.DateUpdated != "" {
+		d.DateUpdated = v.DateUpdated
+	} else if v.GroupInfo.DateUpdated != "" {
+		d.DateUpdated = v.GroupInfo.DateUpdated
+	}
+
+	// Handle ID field - prefer _id, fallback to id
+	if v.ID != "" {
+		d.ID = v.ID
+	} else if v.IDAlt != "" {
+		d.ID = v.IDAlt
+	}
+
+	// Handle Price field - use from groupInfo since that's where it actually is
+	d.Price = v.GroupInfo.Price
+
+	return nil
 }
 
 // ListQuery describes filters for GET /messages/v4/list
