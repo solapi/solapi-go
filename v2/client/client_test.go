@@ -16,7 +16,7 @@ func TestClient_MessagesSend_WiresThrough(t *testing.T) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		if r.URL.Path != "/messages/v4/send-many/detail" {
+		if r.URL.Path != "/messages/v4/send-many/fast" {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}

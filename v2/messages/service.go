@@ -85,7 +85,7 @@ func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGr
 		ShowMessageList: req.ShowMessageList,
 		Agent:           ag,
 	}
-	url := fmt.Sprintf("%s/messages/v4/send-many/detail", s.baseURL)
+	url := fmt.Sprintf("%s/messages/v4/send-many/fast", s.baseURL)
 	httpReq := transport.DefaultRequest{URL: url, Method: "POST"}
 	ctx = transport.WithHTTPClient(ctx, s.httpClient)
 	res, err := transport.FetchJSON[apiSendRequest, DetailGroupMessageResponse](ctx, s.creds, httpReq, &payload)

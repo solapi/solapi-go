@@ -60,7 +60,7 @@ func (s *Service) AddMessages(ctx context.Context, groupId string, reqBody AddGr
 	return transport.FetchJSON[AddGroupMessagesRequest, GroupActionResponse](ctx, s.creds, req, &reqBody)
 }
 
-// ListMessages GET /messages/v4/groups/{groupId}/messages
+// ListMessages GET /messages/v4/groups/fast/{groupId}/messages
 func (s *Service) ListMessages(ctx context.Context, groupId string, q ListMessagesQuery) (messages.MessageListResponse, error) {
 	values := url.Values{}
 	if q.StartKey != "" {
@@ -69,7 +69,7 @@ func (s *Service) ListMessages(ctx context.Context, groupId string, q ListMessag
 	if q.Limit > 0 {
 		values.Set("limit", fmt.Sprintf("%d", q.Limit))
 	}
-	urlStr := fmt.Sprintf("%s/messages/v4/groups/%s/messages", s.baseURL, groupId)
+	urlStr := fmt.Sprintf("%s/messages/v4/groups/fast/%s/messages", s.baseURL, groupId)
 	if enc := values.Encode(); enc != "" {
 		urlStr += "?" + enc
 	}
@@ -121,9 +121,9 @@ func (s *Service) ListGroups(ctx context.Context, q ListGroupsQuery) (ListGroups
 	return transport.FetchJSON[struct{}, ListGroupsResponse](ctx, s.creds, req, nil)
 }
 
-// GetGroup GET /messages/v4/groups/{groupId}
+// GetGroup GET /messages/v4/groups/fast/{groupId}
 func (s *Service) GetGroup(ctx context.Context, groupId string) (GroupResponse, error) {
-	urlStr := fmt.Sprintf("%s/messages/v4/groups/%s", s.baseURL, groupId)
+	urlStr := fmt.Sprintf("%s/messages/v4/groups/fast/%s", s.baseURL, groupId)
 	req := transport.DefaultRequest{URL: urlStr, Method: "GET"}
 	ctx = transport.WithHTTPClient(ctx, s.httpClient)
 	return transport.FetchJSON[struct{}, GroupResponse](ctx, s.creds, req, nil)
