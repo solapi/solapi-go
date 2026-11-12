@@ -153,7 +153,7 @@ func (r *Messages) GetGroup(groupId string) (types.Group, error) {
 		return result, setCustomConfigErr
 	}
 	params := map[string]string{}
-	url := fmt.Sprintf("messages/v4/groups/%s", groupId)
+	url := fmt.Sprintf("messages/v4/groups/fast/%s", groupId)
 	err := request.GET(url, params, &result)
 	if err != nil {
 		return result, err
@@ -170,7 +170,7 @@ func (r *Messages) GetGroupMessageList(groupId string, params map[string]string)
 	if setCustomConfigErr != nil {
 		return result, setCustomConfigErr
 	}
-	url := fmt.Sprintf("messages/v4/groups/%s/messages", groupId)
+	url := fmt.Sprintf("messages/v4/groups/fast/%s/messages", groupId)
 	err := request.GET(url, params, &result)
 	if err != nil {
 		return result, err

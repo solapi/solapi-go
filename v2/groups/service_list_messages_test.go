@@ -16,7 +16,7 @@ func TestGroups_ListMessages_BasicSuccess(t *testing.T) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		if r.URL.Path != "/messages/v4/groups/g1/messages" {
+		if r.URL.Path != "/messages/v4/groups/fast/g1/messages" {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
