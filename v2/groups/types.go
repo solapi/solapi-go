@@ -12,10 +12,8 @@ type CreateGroupRequest struct {
 	Name string `json:"name,omitempty"`
 }
 
-type CreateGroupResponse struct {
-	GroupID   string             `json:"groupId"`
-	GroupInfo messages.GroupInfo `json:"groupInfo,omitempty"`
-}
+// CreateGroupResponse shares GroupResponse's shape and decoding.
+type CreateGroupResponse = GroupResponse
 
 type AddGroupMessagesRequest struct {
 	Messages        []messages.Message `json:"messages"`
