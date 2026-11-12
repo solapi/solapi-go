@@ -30,8 +30,8 @@ var (
 // APIRequest api
 type APIRequest struct {
 	// HTTP Request response, statusCode
-	response   string `json:"response"`
-	statusCode string `json:"statusCode"`
+	response   string
+	statusCode string
 
 	// Config
 	APIKey     string `json:"apiKey"`
