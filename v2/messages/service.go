@@ -72,7 +72,7 @@ func (s *Service) SendManyDetail(ctx context.Context, req SendRequest) (DetailGr
 	}
 
 	ag := &apiAgent{
-		SDKVersion: "go/2.0.0",
+		SDKVersion: "go/2.1.0",
 		OSPlatform: runtime.GOOS + " | " + runtime.Version(),
 	}
 	if req.AppId != "" {
