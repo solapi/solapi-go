@@ -144,7 +144,7 @@ func TestSendManyDetail_FullResponseDeserialization(t *testing.T) {
 			},
 		},
 		"serviceMethod": "send-many/detail",
-		"sdkVersion":    "go/2.0.0",
+		"sdkVersion":    "go/2.1.0",
 		"osPlatform":    "darwin | go1.21.0",
 		"log": []any{
 			map[string]any{
