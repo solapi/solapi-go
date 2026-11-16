@@ -40,7 +40,7 @@ func (s *Service) Create(ctx context.Context, opt CreateGroupOptions) (CreateGro
 		CustomFields    map[string]string `json:"customFields,omitempty"`
 	}
 	b := body{
-		SDKVersion:      "go/2.0.0",
+		SDKVersion:      "go/2.1.0",
 		OSPlatform:      runtime.GOOS + " | " + runtime.Version(),
 		AllowDuplicates: opt.AllowDuplicates,
 		AppId:           opt.AppId,
